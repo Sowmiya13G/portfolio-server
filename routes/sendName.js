@@ -1,6 +1,6 @@
 import axios from "axios";
 import express from "express";
-import { decryptText } from "../utils/crypto";
+import { decryptText } from "../utils/crypto.js";
 
 const router = express.Router();
 
