@@ -1,36 +1,37 @@
 import express from "express";
-import axios from "axios";
+import nodemailer from "nodemailer";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   const { user_name, user_email, message } = req.body;
-  const { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_ID } = process.env;
-
+  const { EMAIL_USER, EMAIL_PASS } =
+  process.env;
   if (!user_name || !user_email || !message) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({ error: "Missing fields" });
   }
 
   try {
-    const response = await axios.post("https://api.emailjs.com/api/v1.0/email/send", {
-      service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_ID,
-      user_id: EMAILJS_PUBLIC_ID,
-      template_params: {
-        user_name,
-        user_email,
-        message,
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASS,
       },
-    }, {
-      headers: {
-        "Content-Type": "application/json"
-      }
     });
 
-    return res.status(200).json({ success: true, data: response.data });
+    await transporter.sendMail({
+      from: `"${user_name}" <${user_email}>`,
+      to: process.env.EMAIL_USER,
+      subject: "New message from portfolio",
+      text: message,
+      replyTo: user_email,  
+    });
+
+    res.status(200).json({ success: true });
   } catch (err) {
-    console.error("EmailJS API error:", err.response?.data || err.message);
-    return res.status(500).json({ error: "Failed to send email" });
+    console.error("Nodemailer error:", err);
+    res.status(500).json({ error: "Email send failed" });
   }
 });
 
