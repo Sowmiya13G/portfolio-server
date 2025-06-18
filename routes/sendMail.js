@@ -4,7 +4,7 @@ import { decryptText } from "../utils/crypto.js";
 
 const router = express.Router();
 
-router.post('/send-email', async (req, res) => {
+router.post('/', async (req, res) => {
   const { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_ID} = process.env;
 
   const { user_name, user_email, message } = req.body;
