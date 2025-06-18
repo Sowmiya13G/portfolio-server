@@ -8,7 +8,8 @@ router.post("/", async (req, res) => {
   const { name: encryptedName } = req.body;
   const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = process.env;
 
-  if (!encryptedName) return res.status(400).json({ error: "Name is required" });
+  if (!encryptedName)
+    return res.status(400).json({ error: "Name is required" });
 
   let name;
   try {
@@ -20,11 +21,14 @@ router.post("/", async (req, res) => {
   const message = `🙋‍♂️ New Visitor Name:\n<b>${name}</b>`;
 
   try {
-    await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      chat_id: TELEGRAM_CHAT_ID,
-      text: message,
-      parse_mode: "HTML",
-    });
+    await axios.post(
+      `${BASE_TELEGRAM_URL}/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: "HTML",
+      }
+    );
 
     res.status(200).json({ success: true });
   } catch (err) {

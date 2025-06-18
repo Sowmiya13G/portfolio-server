@@ -5,7 +5,8 @@ import { decryptText } from "../utils/crypto.js";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = process.env;
+  const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, BASE_TELEGRAM_URL } =
+    process.env;
   const { country_name, city, region, ip, latitude, longitude, timestamp } =
     req.body;
 
@@ -29,7 +30,7 @@ router.post("/", async (req, res) => {
 
   try {
     await axios.post(
-      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      `${BASE_TELEGRAM_URL}/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
         chat_id: TELEGRAM_CHAT_ID,
         text: message,
